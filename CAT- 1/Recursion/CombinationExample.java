@@ -1,18 +1,32 @@
 package Recursion;
+//import java.io.*;
 
 public class CombinationExample {
-    public static int calculateCombination(int n, int r) {
-        if (r == 0 || r == n) {
-            return 1;
+    static void combinationUtil(int arr[], int n, int r, int index, int data[], int i)
+    {
+        if (index == r)
+        {
+            for (int j=0; j<r; j++)
+                System.out.print(data[j]+" ");
+            System.out.println("");
+        return;
         }
-      
-        return calculateCombination(n - 1, r - 1) + calculateCombination(n - 1, r);
-    }
-    
+        if (i >= n)
+        return;
 
-    public static void main(String[] args) {
-        int n = 5, r = 2;
-        int result = calculateCombination(n, r);
-        System.out.println("Combination of C(" + n + ", " + r + "): " + result);
+        data[index] = arr[i];
+        combinationUtil(arr, n, r, index+1, data, i+1);
+
+        combinationUtil(arr, n, r, index, data, i+1);
+    }
+    public static void main (String[] args) {
+        int arr[] = {1, 2, 3,4,5};
+        int r = 2;
+        int n = arr.length;
+        int data[]=new int[r];
+
+        combinationUtil(arr, n, r, 0, data, 0);
     }
 }
+
+
