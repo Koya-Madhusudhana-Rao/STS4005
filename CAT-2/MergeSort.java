@@ -1,90 +1,108 @@
-public class MergeSort {
+class mergesortdll {
+    static class Node{  
+        int data;  
+        Node prev;  
+        Node next;  
+   
+        public Node(int data) {  
+            this.data = data;  
+        }  
+    }  
+   
+    static Node head,tail = null;  
+   
+    public static Node addNode(int item) {  
+        Node newNode = new Node(item);  
+   
+        if(head == null) {  
+            head = tail = newNode;  
+            head.prev = null;  
+            tail.next = null;  
+        }  
+        else {  
+            tail.next = newNode;  
+            newNode.prev = tail;  
+            tail = newNode;  
+            tail.next = null;  
+        }  
 
-    // Merge two subarrays of arr[]
-    // First subarray is arr[l..m]
-    // Second subarray is arr[m+1..r]
-    void merge(int arr[], int l, int m, int r) {
-        // Find sizes of two subarrays to be merged
-        int n1 = m - l + 1;
-        int n2 = r - m;
 
-        /* Create temporary arrays */
-        int L[] = new int[n1];
-        int R[] = new int[n2];
+        return head;
+    }
 
-        /*Copy data to temporary arrays*/
-        for (int i = 0; i < n1; ++i)
-            L[i] = arr[l + i];
-        for (int j = 0; j < n2; ++j)
-            R[j] = arr[m + 1 + j];
 
-        /* Merge the temporary arrays */
-
-        // Initial indexes of first and second subarrays
-        int i = 0, j = 0;
-
-        // Initial index of merged subarray array
-        int k = l;
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
+    static void print(Node node) {
+        Node temp = node;
+        System.out.println("Forward Traversal using next pointer");
+        while (node != null) {
+            System.out.print(node.data + " ");
+            temp = node;
+            node = node.next;
         }
-
-        /* Copy remaining elements of L[] if any */
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-
-        /* Copy remaining elements of R[] if any */
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
+        System.out.println("\nBackward Traversal using prev pointer");
+        while (temp != null) {
+            System.out.print(temp.data + " ");
+            temp = temp.prev;
         }
     }
 
-    // Main function that sorts arr[l..r] using merge()
-    void sort(int arr[], int l, int r) {
-        if (l < r) {
-            // Find the middle point
-            int m = (l + r) / 2;
 
-            // Sort first and second halves
-            sort(arr, l, m);
-            sort(arr, m + 1, r);
+   
+    static Node split(Node head) {
+        Node fast = head, slow = head;
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        Node temp = slow.next;
+        slow.next.prev=null;
+        slow.next = null;
+        return temp;
+    }
+    static Node mergeSort(Node node) {
+        if (node == null || node.next == null) {
+            return node;
+        }
+        Node second = split(node);
+        node = mergeSort(node);
+        second = mergeSort(second);
+        return merge(node, second);
+    }
 
-            // Merge the sorted halves
-            merge(arr, l, m, r);
+
+    static Node merge(Node first, Node second) {
+        if (first == null) {
+            return second;
+        }
+        if (second == null) {
+            return first;
+        }
+        if (first.data < second.data) {
+            first.next = merge(first.next, second);
+            first.next.prev = first;
+            return first;
+        } else {
+            second.next = merge(first, second.next);
+            second.next.prev = second;  
+            return second;
         }
     }
 
-    // Function to print array of size n
-    static void printArray(int arr[]) {
-        int n = arr.length;
-        for (int i = 0; i < n; ++i)
-            System.out.print(arr[i] + " ");
-        System.out.println();
-    }
 
-    // Driver method
-    public static void main(String args[]) {
-        int arr[] = {12, 11, 13, 5, 6, 7};
+   
+    public static void main(String[] args) {
+        head=addNode(10);
+        head=addNode(30);
+        head=addNode(3);
+        head=addNode(4);
+        head=addNode(20);
+       
+       
+        Node node = null;
+        node = mergeSort(head);
+        System.out.println("Linked list after sorting :");
+        print(node);
 
-        System.out.println("Given Array");
-        printArray(arr);
 
-        MergeSort ob = new MergeSort();
-        ob.sort(arr, 0, arr.length - 1);
-
-        System.out.println("\nSorted array");
-        printArray(arr);
     }
 }
